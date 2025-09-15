@@ -18,6 +18,7 @@
         }
       }
     },
+    
     "prune-lockfile": {
       "dependsOn": ["build"],
       "cache": true,
