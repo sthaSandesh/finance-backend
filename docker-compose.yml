@@ -1,13 +1,13 @@
 version: '3.8'
 
 services:
-  dev-db:
+  fin-db:
     image: postgres:15
     restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234
-      POSTGRES_DB: nest
+      POSTGRES_DB: finance
     ports:
       - "5432:5432"
     networks:
