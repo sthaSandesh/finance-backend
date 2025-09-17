@@ -5,12 +5,16 @@ import { DATABASE_CONNECTION } from '../../database/database-connection';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { eq } from 'drizzle-orm';
 import * as schema from '../user/schema';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
     @Inject(DATABASE_CONNECTION)
-    private readonly database: NodePgDatabase<typeof schema>
+    private readonly database: NodePgDatabase<typeof schema>,
+    private jwt: JwtService,
+    private config: ConfigService
   ) {}
 
   async signup(dto: AuthDto) {
@@ -28,11 +32,7 @@ export class AuthService {
       .returning(); // returns the inserted row (like RETURNING * in SQL).
 
     // 3️⃣ Return safe data (exclude password)
-    return {
-      id: user.id,
-      email: user.email,
-      //   password: hash
-    };
+    return this.signToken(user.id, user.email);
   }
 
   async signin(dto: AuthDto) {
@@ -55,9 +55,26 @@ export class AuthService {
     }
 
     // send back the user (excluding password)
+    return this.signToken(user.id, user.email);
+  }
+
+  async signToken(
+    userId: number,
+    email: string
+  ): Promise<{ access_token: string }> {
+    const payload = {
+      sub: userId,
+      email,
+    };
+    const secret = this.config.get('JWT_SECRET');
+
+    const token = await this.jwt.signAsync(payload, {
+      expiresIn: '15m',
+      secret: secret,
+    });
+    
     return {
-      id: user.id,
-      email: user.email,
+      access_token: token,
     };
   }
 }

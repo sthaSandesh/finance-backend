@@ -5,7 +5,10 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 export default defineConfig({
-  schema: './apps/finance/src/modules/user/schema.ts',
+  schema: [
+    './apps/finance/src/modules/user/schema.ts',
+    './apps/finance/src/modules/journal/schema.ts',
+  ],
   out: './apps/finance/src/database/migrations',
   dialect: 'postgresql',
   dbCredentials: {
