@@ -22,3 +22,4 @@ export class updateJournal {
       credit: number;
 
 }
+

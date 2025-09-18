@@ -5,6 +5,7 @@ import * as schema from './schema';
 import { CreateJournal } from './dto/create-journal.dto';
 import { and, eq } from 'drizzle-orm';
 import { updateJournal } from './dto/update-journal.dti';
+import { omitBy, isUndefined } from 'lodash';
 
 @Injectable()
 export class JournalService {
@@ -61,22 +62,18 @@ export class JournalService {
   }
 
   async updateJournal(id: number, userId: number, dto: updateJournal) {
+    const updateFieldData = omitBy(dto, isUndefined);
     const [updatedJournal] = await this.database
       .update(schema.journalSchema)
-      .set({
-        date: dto.date,
-        description: dto.description,
-        debit: dto.debit,
-        credit: dto.credit,
-      })
+      .set(updateFieldData)
       .where(
         and(
           eq(schema.journalSchema.id, id),
           eq(schema.journalSchema.userId, userId)
         )
       )
-      .returning(); // returns updated row
-
+      .returning(); // returns updated in row 
+ 
     if (!updatedJournal) {
       throw new NotFoundException(
         `Journal with ID ${id} not found or you don't have access`
@@ -95,6 +92,6 @@ export class JournalService {
           eq(schema.journalSchema.userId, userId)
         )
       );
-      return 'tero delete vayo ja her'
+      return 'Deleted Sucessfully'
   }
 }

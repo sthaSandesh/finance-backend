@@ -38,8 +38,8 @@ export class JournalController {
     return this.journalService.getAllJournals(req.user.id);
   }
 
-  @Patch(':id')
   @UseGuards(AuthGuard('jwt'))
+  @Patch(':id')
   async updateJournal(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: updateJournal,
@@ -55,4 +55,3 @@ export class JournalController {
     return this.journalService.deleteJournal(id, req.user.id);
   }
 }
-
