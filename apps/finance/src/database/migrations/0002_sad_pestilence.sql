@@ -1,0 +1,1 @@
+ALTER TABLE "journal" ADD COLUMN "account" text DEFAULT 'general' NOT NULL;

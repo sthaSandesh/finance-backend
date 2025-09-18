@@ -12,6 +12,10 @@ export class CreateJournal {
   description: string;
 
   @IsNotEmpty()
+  @IsString()
+  account: string;
+
+  @IsNotEmpty()
   @IsNumber()
   @Min(0)
   debit: number;

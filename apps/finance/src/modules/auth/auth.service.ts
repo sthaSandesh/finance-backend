@@ -1,4 +1,4 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { AuthDto } from './dto';
 import * as argon from 'argon2';
 import { DATABASE_CONNECTION } from '../../database/database-connection';
@@ -21,9 +21,18 @@ export class AuthService {
     // 1️⃣ Generate the password hash
     const hash = await argon.hash(dto.password);
 
+    const checkemail = await this.database
+      .select()
+      .from(schema.UserSchema)
+      .where(eq(schema.UserSchema.email, dto.email));
+
+      
+      if(checkemail){
+        throw new ConflictException('this email ' + dto.email +' already exixt') 
+      }
     // 2️⃣ Save the new user in the DB
     const [user] = await this.database
-      .insert(schema.UserSchema) //insert into the users table.
+      .insert(schema.UserSchema) //insert into the users table.s
       .values({
         //pass the data to insert (email + hashed password).
         email: dto.email,
@@ -72,7 +81,7 @@ export class AuthService {
       expiresIn: '15m',
       secret: secret,
     });
-    
+
     return {
       access_token: token,
     };

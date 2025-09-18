@@ -40,6 +40,7 @@ export class JournalService {
       .insert(schema.journalSchema)
       .values({
         userId,
+        account: dto.account,
         date: dto.date,
         description: dto.description,
         debit: dto.debit,
